@@ -1,4 +1,4 @@
-# Remotion tldraw video
+# Remotion Mafs video
 
 npm i
 npm start

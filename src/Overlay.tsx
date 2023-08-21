@@ -1,40 +1,45 @@
-import { AbsoluteFill, interpolate,spring, useCurrentFrame, useVideoConfig } from 'remotion';
-import React, { useMemo } from 'react';
-import { TDShapeType, Tldraw, TldrawApp } from '@tldraw/tldraw';
+import {
+	AbsoluteFill,
+	interpolate,
+	spring,
+	useCurrentFrame,
+	useVideoConfig,
+} from 'remotion';
+import React from 'react';
+import {loadFont} from '@remotion/google-fonts/Roboto';
+
+import {Mafs, Point, Coordinates} from 'mafs';
+
+import 'mafs/core.css';
+
+const {fontFamily} = loadFont();
+
+const title: React.CSSProperties = {
+	fontFamily,
+	fontSize: 80,
+	fontWeight: 'bold',
+};
+
+const text: React.CSSProperties = {
+	fontWeight: 'bold',
+	fontFamily,
+	fontSize: 40,
+	color: '#4290F5',
+};
 
 const disappearBeforeEnd = 20;
 
 export const Overlay: React.FC = () => {
-	const [app, setApp] = React.useState<TldrawApp | null>(null);
-
 	const frame = useCurrentFrame();
 	const {fps, durationInFrames} = useVideoConfig();
 
-	const manipulateshape = spring({
+	const myX = spring({
 		fps,
-		from: 0,
-		to: 100,
-		frame: frame,
+		frame,
 		config: {
-			mass: 0.5,
+			damping: 200,
 		},
-		durationInFrames: 40,
 	});
-
-	const handleMount = React.useCallback((app: TldrawApp) => {
-		setApp(app);
-	}, []);
-
-	React.useEffect(() => {
-		if (app) {
-			app.createShapes({
-				id: 'rect1',
-				type: TDShapeType.Rectangle,
-				point: [100, 100 + 0.5 * manipulateshape],
-				size: [400 - manipulateshape, 100 + manipulateshape],
-			});
-		}
-	}, [manipulateshape, app]);
 
 	const out = spring({
 		fps,
@@ -45,26 +50,27 @@ export const Overlay: React.FC = () => {
 		durationInFrames: disappearBeforeEnd,
 	});
 
-	const rotate = interpolate(out, [0, 1], [0, -Math.PI / 20]);
-	const outY = interpolate(out, [0, 1], [0, -100]);
+	const myY = interpolate(out, [0, 1], [0, 3]);
 
-	const container: React.CSSProperties = useMemo(() => {
-		return {
-			position: 'absolute',
-			backgroundColor: 'white',
-			borderRadius: 0,
-			width: 600,
-			height: 400,
-			left: 400,
-			top: 400,
-			transform: `translate(0, ${outY}px) rotate(${rotate}rad) scale(2)`,
-		};
-	}, [outY, rotate]);
+	const container: React.CSSProperties = {
+		position: 'absolute',
+		backgroundColor: 'white',
+		borderRadius: 25,
+		right: 450,
+		top: 90,
+		width: 1000,
+		padding: 40,
+	};
 
 	return (
 		<AbsoluteFill>
 			<div style={container}>
-				<Tldraw onMount={handleMount} />
+				<div style={title}>Welcome</div>
+				<div style={text}>to a mafs animation in remotion!</div>
+				<Mafs>
+					<Coordinates.Cartesian />
+					<Point x={myX} y={myY} />
+				</Mafs>
 			</div>
 		</AbsoluteFill>
 	);
