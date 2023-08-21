@@ -65,8 +65,8 @@ export const Overlay: React.FC = () => {
 	return (
 		<AbsoluteFill>
 			<div style={container}>
-				<div style={title}>Welcome</div>
-				<div style={text}>to a mafs animation in remotion!</div>
+				<div style={title}>Mafs Animation</div>
+				<div style={text}>made with Remotion</div>
 				<Mafs>
 					<Coordinates.Cartesian />
 					<Point x={myX} y={myY} />
