@@ -8,7 +8,7 @@ import {
 import React from 'react';
 import {loadFont} from '@remotion/google-fonts/Roboto';
 
-import {Mafs, Point, Coordinates} from 'mafs';
+import {Mafs, Theme, Polygon, Coordinates, useMovablePoint} from 'mafs';
 
 import 'mafs/core.css';
 
@@ -36,6 +36,8 @@ export const Overlay: React.FC = () => {
 	const myX = spring({
 		fps,
 		frame,
+		from: 0,
+		to: 3,
 		config: {
 			damping: 200,
 		},
@@ -50,15 +52,20 @@ export const Overlay: React.FC = () => {
 		durationInFrames: disappearBeforeEnd,
 	});
 
-	const myY = interpolate(out, [0, 1], [0, 3]);
+	const myY = interpolate(out, [0, 1], [0, 2]);
+
+	const a = [myX, myY] as [number, number];
+	const b = [-2, 0] as [number, number];
+	const c = useMovablePoint([0, 2]);
 
 	const container: React.CSSProperties = {
 		position: 'absolute',
 		backgroundColor: 'white',
 		borderRadius: 25,
-		right: 450,
+		right: 200,
 		top: 90,
-		width: 1000,
+		width: 1500,
+		height: 800,
 		padding: 40,
 	};
 
@@ -69,7 +76,9 @@ export const Overlay: React.FC = () => {
 				<div style={text}>made with Remotion</div>
 				<Mafs>
 					<Coordinates.Cartesian />
-					<Point x={myX} y={myY} />
+					<Polygon points={[[c.x, -c.y], a, b]}  />
+					<Polygon points={[c.point, a, b]} color={Theme.blue} />
+					{c.element}
 				</Mafs>
 			</div>
 		</AbsoluteFill>
